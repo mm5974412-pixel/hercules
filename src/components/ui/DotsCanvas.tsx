@@ -53,7 +53,10 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     // Светлая тема — анимированные волны
     let waveOffset = 0;
     let lastTime = 0;
-    const targetFPS = 30; // Ограничиваем FPS для мобильных
+    // Определяем тач-устройство для агрессивной оптимизации
+    const isTouchDevice = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targetFPS = isTouchDevice ? 20 : 30; // Ещё меньше FPS для тач-устройств
     const frameInterval = 1000 / targetFPS;
 
     let raf: number;
