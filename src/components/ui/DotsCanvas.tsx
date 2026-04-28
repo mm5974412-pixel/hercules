@@ -52,16 +52,27 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
 
     // Светлая тема — анимированные волны
     let waveOffset = 0;
+    let lastTime = 0;
+    const targetFPS = 30; // Ограничиваем FPS для мобильных
+    const frameInterval = 1000 / targetFPS;
 
     let raf: number;
 
-    const draw = () => {
+    const draw = (timestamp: number) => {
       const light = isLightTheme();
+
+      // Ограничиваем частоту кадров
+      if (timestamp - lastTime < frameInterval) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+      lastTime = timestamp;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (light) {
         // Рисуем плавные градиентные волны
-        waveOffset += 0.005;
+        waveOffset += 0.008;
 
         // Первая волна (задняя, более прозрачная)
         const gradient1 = ctx.createLinearGradient(0, 0, canvas.width, 0);
@@ -72,7 +83,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         ctx.fillStyle = gradient1;
         ctx.beginPath();
         ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 10) {
+        for (let x = 0; x <= canvas.width; x += 20) { // Увеличили шаг для оптимизации
           const y = Math.sin((x * 0.003) + waveOffset) * 60 + Math.sin((x * 0.007) + waveOffset * 1.5) * 30;
           ctx.lineTo(x, canvas.height * 0.4 + y);
         }
@@ -89,7 +100,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         ctx.fillStyle = gradient2;
         ctx.beginPath();
         ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 10) {
+        for (let x = 0; x <= canvas.width; x += 20) {
           const y = Math.sin((x * 0.004) + waveOffset * 1.2 + 2) * 50 + Math.sin((x * 0.006) + waveOffset * 0.8) * 25;
           ctx.lineTo(x, canvas.height * 0.5 + y);
         }
@@ -106,7 +117,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         ctx.fillStyle = gradient3;
         ctx.beginPath();
         ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 10) {
+        for (let x = 0; x <= canvas.width; x += 20) {
           const y = Math.sin((x * 0.005) + waveOffset * 0.7 + 4) * 40 + Math.sin((x * 0.008) + waveOffset * 1.3) * 20;
           ctx.lineTo(x, canvas.height * 0.65 + y);
         }
@@ -114,7 +125,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         ctx.closePath();
         ctx.fill();
       } else {
-        // Тёмная тема — анимированные точки
+        // Тёмная тема — анимированные точки (тоже с ограничением)
         dots.forEach((d) => {
           d.alpha += d.aDir * 0.003;
           if (d.alpha > 0.7 || d.alpha < 0.08) d.aDir *= -1;
@@ -134,7 +145,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
 
       raf = requestAnimationFrame(draw);
     };
-    draw();
+    draw(0);
 
     // Слушаем изменения темы
     const observer = new MutationObserver(() => {
