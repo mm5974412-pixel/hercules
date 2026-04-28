@@ -61,6 +61,8 @@ export default function Home() {
         >
           {/* затемняющий оверлей */}
           <div className="absolute inset-0 bg-bg-primary/94 pointer-events-none" />
+          {/* плавный переход от Hero — убирает полоску на стыке */}
+          <div className="absolute top-0 left-0 right-0 h-8 z-[1] bg-gradient-to-b from-bg-primary to-transparent pointer-events-none" />
 
           <div className="relative z-10">
             <Features />
