@@ -2,11 +2,99 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Shield, ChevronDown } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const CODE_SNIPPETS = [
+  { code: `def scan_repo():\n  vulns = check_nvd()\n  return report(vulns)` },
+  { code: `const audit = async () => {\n  await sast.run()\n  return findings\n}` },
+  { code: `SELECT * FROM vulns\nWHERE severity='HIGH'\nAND status='open'` },
+  { code: `if (token.expired) {\n  throw new AuthError(403)\n}` },
+  { code: `result = analyzer\n  .scan(repo)\n  .filter(HIGH)` },
+  { code: `npm audit --json\n| jq '.vulnerabilities'` },
+  { code: `helmet.csp({ directives:\n  { defaultSrc: ["'self'"] }\n})` },
+];
+
+const FLOAT_POSITIONS = [
+  { right: "4%",  top: "8%",  delay: 0,   floatY: 12, duration: 9,  opacity: 0.7 },
+  { right: "22%", top: "18%", delay: 1.5, floatY: 10, duration: 11, opacity: 0.55 },
+  { right: "6%",  top: "42%", delay: 2.8, floatY: 8,  duration: 10, opacity: 0.65 },
+  { right: "26%", top: "58%", delay: 0.7, floatY: 14, duration: 8,  opacity: 0.5 },
+  { right: "12%", top: "72%", delay: 2.0, floatY: 10, duration: 12, opacity: 0.6 },
+  { right: "30%", top: "35%", delay: 1.2, floatY: 9,  duration: 10, opacity: 0.45 },
+  { right: "18%", top: "82%", delay: 3.4, floatY: 11, duration: 9,  opacity: 0.5 },
+];
+
+function DotsCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const setSize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    setSize();
+    const ro = new ResizeObserver(setSize);
+    ro.observe(canvas);
+
+    type Dot = { x: number; y: number; r: number; alpha: number; aDir: number; dx: number; dy: number; isTeal: boolean };
+    const N = 160;
+    let dots: Dot[] = [];
+    const init = () => {
+      dots = Array.from({ length: N }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        alpha: Math.random() * 0.45 + 0.1,
+        aDir: Math.random() > 0.5 ? 1 : -1,
+        dx: (Math.random() - 0.5) * 0.07,
+        dy: -(Math.random() * 0.1 + 0.03),
+        isTeal: Math.random() > 0.7,
+      }));
+    };
+    init();
+
+    let raf: number;
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dots.forEach((d) => {
+        d.alpha += d.aDir * 0.003;
+        if (d.alpha > 0.7 || d.alpha < 0.08) d.aDir *= -1;
+        d.x += d.dx;
+        d.y += d.dy;
+        if (d.y < -2) d.y = canvas.height + 2;
+        if (d.x < -2) d.x = canvas.width + 2;
+        if (d.x > canvas.width + 2) d.x = -2;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = d.isTeal
+          ? `rgba(45,212,191,${d.alpha})`
+          : `rgba(210,240,240,${d.alpha * 0.75})`;
+        ctx.fill();
+      });
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
+  );
+}
 
 interface HeroProps {
   onOpenDownload: () => void;
@@ -21,9 +109,6 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
     offset: ["start start", "end start"],
   });
 
-  // лёгкий параллакс: картинка «уплывает» медленнее чем скролл
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
@@ -31,49 +116,44 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
       ref={sectionRef}
       className="relative min-h-screen flex items-center overflow-hidden pt-20"
     >
-      {/* ── Фоновый teal-градиент (работает на обеих темах) ── */}
+      {/* ── Фон ── */}
       <div className="absolute inset-0 z-0 bg-bg-primary" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_80%_at_68%_55%,rgba(20,184,166,0.15),transparent)]" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_50%_60%_at_75%_45%,rgba(45,212,191,0.10),transparent)]" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_35%_45%_at_82%_65%,rgba(20,184,166,0.12),transparent)]" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(20,184,166,0.08),transparent)]" />
 
-      {/* ── Щит: PNG с прозрачным фоном ── */}
-      <motion.div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{ y: bgY, scale: bgScale }}
-      >
-        {/* Десктоп */}
-        <img
-          src={`${basePath}/shield.png`}
-          alt=""
-          className="hidden md:block absolute hero-shield-img"
-          style={{
-            width: "56vw",
-            maxWidth: "860px",
-            top: "50%",
-            right: "-4%",
-            transform: "translateY(-50%)",
-            opacity: 0.92,
-            filter: "saturate(1.3) brightness(1.05)",
-          }}
-        />
-        {/* Мобиль */}
-        <img
-          src={`${basePath}/shield.png`}
-          alt=""
-          className="md:hidden absolute"
-          style={{
-            width: "90vw",
-            top: "35%",
-            left: "50%",
-            transform: "translate(-50%, 0)",
-            opacity: 0.12,
-          }}
-        />
-      </motion.div>
+      {/* ── Анимированные точки ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <DotsCanvas />
+      </div>
 
-      {/* ── Усилитель цвета щита (teal overlay поверх щита) ── */}
-      <div className="absolute inset-0 z-[1] pointer-events-none hidden md:block bg-[radial-gradient(ellipse_55%_70%_at_72%_58%,rgba(20,184,166,0.18),transparent)]" />
+      {/* ── Плавающие блоки кода ── */}
+      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+        {CODE_SNIPPETS.map((item, i) => {
+          const pos = FLOAT_POSITIONS[i];
+          return (
+            <motion.div
+              key={i}
+              className="absolute hidden sm:block"
+              style={{ right: pos.right, top: pos.top }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: pos.opacity }}
+              transition={{ duration: 1.5, delay: pos.delay }}
+            >
+              <motion.div
+                animate={{ y: [0, -pos.floatY, 0] }}
+                transition={{
+                  duration: pos.duration,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: pos.delay,
+                }}
+                className="font-[family-name:var(--font-jetbrains-mono)] text-[10px] leading-relaxed text-teal-primary bg-bg-secondary/40 backdrop-blur-sm border border-teal-primary/20 rounded-lg px-3 py-2.5 max-w-[210px]"
+              >
+                <pre className="whitespace-pre">{item.code}</pre>
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </div>
 
       {/* ── Левый градиент — текст всегда читается ── */}
       <div className="absolute inset-0 z-[2] bg-gradient-to-r from-bg-primary via-bg-primary/85 to-transparent" />
