@@ -18,17 +18,34 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     if (!ctx) return;
 
     let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-    const setSize = () => {
-      if (resizeTimeout) return; // throttle
-      resizeTimeout = setTimeout(() => {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        resizeTimeout = null;
-      }, 200); // debounce 200ms
+    let lastW = 0;
+    let lastH = 0;
+    const URL_BAR_TOLERANCE = 200;
+    const applySize = () => {
+      const newW = canvas.offsetWidth;
+      const newH = canvas.offsetHeight;
+      canvas.width = newW;
+      canvas.height = newH;
+      lastW = newW;
+      lastH = newH;
     };
-    setSize();
-    const ro = new ResizeObserver(setSize);
+    const setSize = (force = false) => {
+      const newW = canvas.offsetWidth;
+      const newH = canvas.offsetHeight;
+      if (!force && newW === lastW && Math.abs(newH - lastH) < URL_BAR_TOLERANCE) {
+        return;
+      }
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        applySize();
+        resizeTimeout = null;
+      }, 200);
+    };
+    applySize();
+    const ro = new ResizeObserver(() => setSize());
     ro.observe(canvas);
+    const onOrientation = () => setSize(true);
+    window.addEventListener("orientationchange", onOrientation);
 
     const isLightTheme = () => document.documentElement.classList.contains("light");
 
@@ -154,6 +171,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
       cancelAnimationFrame(raf);
       ro.disconnect();
       observer.disconnect();
+      window.removeEventListener("orientationchange", onOrientation);
       if (resizeTimeout) clearTimeout(resizeTimeout);
     };
   }, [dotCount]);
