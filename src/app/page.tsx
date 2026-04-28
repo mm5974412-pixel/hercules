@@ -52,7 +52,7 @@ export default function Home() {
         <div
           className="relative fon-wrapper"
           style={{
-            backgroundImage: "url('/fon.png')",
+            backgroundImage: `url('${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/fon.png')`,
             backgroundSize: "cover",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",

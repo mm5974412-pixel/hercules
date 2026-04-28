@@ -6,6 +6,8 @@ import { useRef } from "react";
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 interface HeroProps {
   onOpenDownload: () => void;
   onOpenDemo: () => void;
@@ -44,7 +46,7 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
         <div
           className="hidden md:block absolute inset-0 hero-shield-img"
           style={{
-            backgroundImage: "url(/hero-bg.png)",
+            backgroundImage: `url(${basePath}/hero-bg.png)`,
             backgroundSize: "cover",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
@@ -56,7 +58,7 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
         <div
           className="md:hidden absolute inset-0"
           style={{
-            backgroundImage: "url(/hero-bg.png)",
+            backgroundImage: `url(${basePath}/hero-bg.png)`,
             backgroundSize: "110vw auto",
             backgroundPosition: "center 38%",
             backgroundRepeat: "no-repeat",
