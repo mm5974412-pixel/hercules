@@ -54,8 +54,17 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     const gridSpacing = 60;
 
     let raf: number;
+    let lastTheme: boolean | null = null;
+
     const draw = () => {
       const light = isLightTheme();
+
+      // Логируем только при изменении темы
+      if (lastTheme !== light) {
+        console.log("DotsCanvas theme:", light ? "light" : "dark", "grid:", light ? "showing" : "dots");
+        lastTheme = light;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (light) {
