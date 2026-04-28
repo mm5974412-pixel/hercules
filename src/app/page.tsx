@@ -28,7 +28,7 @@ export default function Home() {
         Перейти к содержимому
       </a>
 
-      <DotsCanvas className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: -1 }} />
+      <DotsCanvas className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />
 
       <Header
         onOpenDemo={() => setDemoOpen(true)}
