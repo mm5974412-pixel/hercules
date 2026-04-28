@@ -50,53 +50,69 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     };
     initDots();
 
-    // Светлая тема — статичная сетка
-    const gridSpacing = 60;
+    // Светлая тема — анимированные волны
+    let waveOffset = 0;
 
     let raf: number;
-    let lastTheme: boolean | null = null;
 
     const draw = () => {
       const light = isLightTheme();
-
-      // Логируем только при изменении темы
-      if (lastTheme !== light) {
-        console.log("DotsCanvas theme:", light ? "light" : "dark", "grid:", light ? "showing" : "dots");
-        lastTheme = light;
-      }
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (light) {
-        // Рисуем тонкую техническую сетку
-        ctx.strokeStyle = "rgba(20,184,166,0.25)";
-        ctx.lineWidth = 0.8;
+        // Рисуем плавные градиентные волны
+        waveOffset += 0.005;
 
-        // Вертикальные линии
-        for (let x = 0; x <= canvas.width; x += gridSpacing) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, canvas.height);
-          ctx.stroke();
-        }
+        // Первая волна (задняя, более прозрачная)
+        const gradient1 = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient1.addColorStop(0, "rgba(20,184,166,0.03)");
+        gradient1.addColorStop(0.5, "rgba(45,212,191,0.08)");
+        gradient1.addColorStop(1, "rgba(20,184,166,0.03)");
 
-        // Горизонтальные линии
-        for (let y = 0; y <= canvas.height; y += gridSpacing) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(canvas.width, y);
-          ctx.stroke();
+        ctx.fillStyle = gradient1;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+        for (let x = 0; x <= canvas.width; x += 10) {
+          const y = Math.sin((x * 0.003) + waveOffset) * 60 + Math.sin((x * 0.007) + waveOffset * 1.5) * 30;
+          ctx.lineTo(x, canvas.height * 0.4 + y);
         }
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
 
-        // Точки на пересечениях
-        ctx.fillStyle = "rgba(20,184,166,0.4)";
-        for (let x = 0; x <= canvas.width; x += gridSpacing) {
-          for (let y = 0; y <= canvas.height; y += gridSpacing) {
-            ctx.beginPath();
-            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-          }
+        // Вторая волна (средняя)
+        const gradient2 = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient2.addColorStop(0, "rgba(20,184,166,0.05)");
+        gradient2.addColorStop(0.5, "rgba(45,212,191,0.12)");
+        gradient2.addColorStop(1, "rgba(20,184,166,0.05)");
+
+        ctx.fillStyle = gradient2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+        for (let x = 0; x <= canvas.width; x += 10) {
+          const y = Math.sin((x * 0.004) + waveOffset * 1.2 + 2) * 50 + Math.sin((x * 0.006) + waveOffset * 0.8) * 25;
+          ctx.lineTo(x, canvas.height * 0.5 + y);
         }
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Третья волна (передняя, ярче)
+        const gradient3 = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient3.addColorStop(0, "rgba(20,184,166,0.02)");
+        gradient3.addColorStop(0.5, "rgba(45,212,191,0.06)");
+        gradient3.addColorStop(1, "rgba(20,184,166,0.02)");
+
+        ctx.fillStyle = gradient3;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+        for (let x = 0; x <= canvas.width; x += 10) {
+          const y = Math.sin((x * 0.005) + waveOffset * 0.7 + 4) * 40 + Math.sin((x * 0.008) + waveOffset * 1.3) * 20;
+          ctx.lineTo(x, canvas.height * 0.65 + y);
+        }
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
       } else {
         // Тёмная тема — анимированные точки
         dots.forEach((d) => {
