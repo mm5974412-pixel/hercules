@@ -160,5 +160,17 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     };
   }, [dotCount]);
 
-  return <canvas ref={canvasRef} className={className} style={style} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={{
+        ...style,
+        willChange: "transform",
+        transform: "translateZ(0)",
+        WebkitTransform: "translateZ(0)",
+        contain: "paint",
+      }}
+    />
+  );
 }
