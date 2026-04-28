@@ -69,8 +69,8 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
 
       if (light) {
         // Рисуем тонкую техническую сетку
-        ctx.strokeStyle = "rgba(20,184,166,0.08)";
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = "rgba(20,184,166,0.25)";
+        ctx.lineWidth = 0.8;
 
         // Вертикальные линии
         for (let x = 0; x <= canvas.width; x += gridSpacing) {
@@ -89,7 +89,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         }
 
         // Точки на пересечениях
-        ctx.fillStyle = "rgba(20,184,166,0.15)";
+        ctx.fillStyle = "rgba(20,184,166,0.4)";
         for (let x = 0; x <= canvas.width; x += gridSpacing) {
           for (let y = 0; y <= canvas.height; y += gridSpacing) {
             ctx.beginPath();
