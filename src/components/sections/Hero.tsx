@@ -25,7 +25,7 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-start sm:items-center overflow-hidden pt-[5.5rem] sm:pt-20"
+      className="relative min-h-screen flex items-start sm:items-center overflow-hidden pt-[6.5rem] sm:pt-20"
     >
       {/* ── Фон ── */}
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(20,184,166,0.08),transparent)]" />
