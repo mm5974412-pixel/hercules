@@ -10,15 +10,6 @@ const CODE_SNIPPETS = [
   { code: `result = analyzer\n  .scan(repo)\n  .filter(HIGH)` },
   { code: `npm audit --json\n| jq '.vulnerabilities'` },
   { code: `helmet.csp({ directives:\n  { defaultSrc: ["'self'"] }\n})` },
-  { code: `git commit -m\n  "fix: patch CVE-2024-1234"` },
-  { code: `docker scan image\n  --severity high` },
-  { code: `await verify(\n  jwt, secret\n)` },
-  { code: `rate_limit(100,\n  per="minute")` },
-  { code: `bcrypt.hash(\n  password, 12\n)` },
-  { code: `csrf.protect()\ntoken.validate()` },
-  { code: `nmap -sV --script\n  vuln target` },
-  { code: `argon2id.hash(\n  pass, salt\n)` },
-  { code: `sanitize(\n  input, schema\n)` },
 ];
 
 const FLOAT_POSITIONS: { left?: string; right?: string; top: string; delay: number; floatY: number; duration: number; opacity: number }[] = [
