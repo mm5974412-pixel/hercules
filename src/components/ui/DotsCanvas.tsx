@@ -17,9 +17,14 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
     const setSize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      if (resizeTimeout) return; // throttle
+      resizeTimeout = setTimeout(() => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        resizeTimeout = null;
+      }, 200); // debounce 200ms
     };
     setSize();
     const ro = new ResizeObserver(setSize);
@@ -77,54 +82,43 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         // Рисуем плавные градиентные волны
         waveOffset += 0.008;
 
-        // Первая волна (задняя, более прозрачная)
-        const gradient1 = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient1.addColorStop(0, "rgba(20,184,166,0.03)");
-        gradient1.addColorStop(0.5, "rgba(45,212,191,0.08)");
-        gradient1.addColorStop(1, "rgba(20,184,166,0.03)");
+        // Кэшируем ширину для оптимизации
+        const w = canvas.width;
+        const h = canvas.height;
 
-        ctx.fillStyle = gradient1;
+        // Первая волна (задняя, более прозрачная)
+        ctx.fillStyle = "rgba(20,184,166,0.03)";
         ctx.beginPath();
-        ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 20) { // Увеличили шаг для оптимизации
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 30) {
           const y = Math.sin((x * 0.003) + waveOffset) * 60 + Math.sin((x * 0.007) + waveOffset * 1.5) * 30;
-          ctx.lineTo(x, canvas.height * 0.4 + y);
+          ctx.lineTo(x, h * 0.4 + y);
         }
-        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(w, h);
         ctx.closePath();
         ctx.fill();
 
         // Вторая волна (средняя)
-        const gradient2 = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient2.addColorStop(0, "rgba(20,184,166,0.05)");
-        gradient2.addColorStop(0.5, "rgba(45,212,191,0.12)");
-        gradient2.addColorStop(1, "rgba(20,184,166,0.05)");
-
-        ctx.fillStyle = gradient2;
+        ctx.fillStyle = "rgba(20,184,166,0.05)";
         ctx.beginPath();
-        ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 20) {
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 30) {
           const y = Math.sin((x * 0.004) + waveOffset * 1.2 + 2) * 50 + Math.sin((x * 0.006) + waveOffset * 0.8) * 25;
-          ctx.lineTo(x, canvas.height * 0.5 + y);
+          ctx.lineTo(x, h * 0.5 + y);
         }
-        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(w, h);
         ctx.closePath();
         ctx.fill();
 
-        // Третья волна (передняя, ярче)
-        const gradient3 = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient3.addColorStop(0, "rgba(20,184,166,0.02)");
-        gradient3.addColorStop(0.5, "rgba(45,212,191,0.06)");
-        gradient3.addColorStop(1, "rgba(20,184,166,0.02)");
-
-        ctx.fillStyle = gradient3;
+        // Третья волна (передняя)
+        ctx.fillStyle = "rgba(20,184,166,0.02)";
         ctx.beginPath();
-        ctx.moveTo(0, canvas.height);
-        for (let x = 0; x <= canvas.width; x += 20) {
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 30) {
           const y = Math.sin((x * 0.005) + waveOffset * 0.7 + 4) * 40 + Math.sin((x * 0.008) + waveOffset * 1.3) * 20;
-          ctx.lineTo(x, canvas.height * 0.65 + y);
+          ctx.lineTo(x, h * 0.65 + y);
         }
-        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(w, h);
         ctx.closePath();
         ctx.fill();
       } else {
@@ -160,6 +154,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
       cancelAnimationFrame(raf);
       ro.disconnect();
       observer.disconnect();
+      if (resizeTimeout) clearTimeout(resizeTimeout);
     };
   }, [dotCount]);
 
