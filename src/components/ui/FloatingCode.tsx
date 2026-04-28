@@ -10,28 +10,37 @@ const CODE_SNIPPETS = [
   { code: `result = analyzer\n  .scan(repo)\n  .filter(HIGH)` },
   { code: `npm audit --json\n| jq '.vulnerabilities'` },
   { code: `helmet.csp({ directives:\n  { defaultSrc: ["'self'"] }\n})` },
+  { code: `git commit -m\n  "fix: patch CVE-2024-1234"` },
+  { code: `docker scan image\n  --severity high` },
+  { code: `await verify(\n  jwt, secret\n)` },
+  { code: `rate_limit(100,\n  per="minute")` },
+  { code: `bcrypt.hash(\n  password, 12\n)` },
+  { code: `csrf.protect()\ntoken.validate()` },
+  { code: `nmap -sV --script\n  vuln target` },
+  { code: `argon2id.hash(\n  pass, salt\n)` },
+  { code: `sanitize(\n  input, schema\n)` },
 ];
 
-const FLOAT_POSITIONS = [
-  { right: "4%",  top: "8%",  delay: 0,   floatY: 12, duration: 9,  opacity: 0.7 },
+const FLOAT_POSITIONS: { left?: string; right?: string; top: string; delay: number; floatY: number; duration: number; opacity: number }[] = [
+  { right: "3%",  top: "8%",  delay: 0,   floatY: 12, duration: 9,  opacity: 0.65 },
   { right: "22%", top: "18%", delay: 1.5, floatY: 10, duration: 11, opacity: 0.55 },
-  { right: "6%",  top: "42%", delay: 2.8, floatY: 8,  duration: 10, opacity: 0.65 },
-  { right: "26%", top: "58%", delay: 0.7, floatY: 14, duration: 8,  opacity: 0.5 },
-  { right: "12%", top: "72%", delay: 2.0, floatY: 10, duration: 12, opacity: 0.6 },
-  { right: "30%", top: "35%", delay: 1.2, floatY: 9,  duration: 10, opacity: 0.45 },
-  { right: "18%", top: "82%", delay: 3.4, floatY: 11, duration: 9,  opacity: 0.5 },
+  { right: "5%",  top: "42%", delay: 2.8, floatY: 8,  duration: 10, opacity: 0.6  },
+  { right: "26%", top: "58%", delay: 0.7, floatY: 14, duration: 8,  opacity: 0.5  },
+  { right: "10%", top: "72%", delay: 2.0, floatY: 10, duration: 12, opacity: 0.55 },
+  { right: "28%", top: "35%", delay: 1.2, floatY: 9,  duration: 10, opacity: 0.45 },
+  { right: "15%", top: "82%", delay: 3.4, floatY: 11, duration: 9,  opacity: 0.5  },
 ];
 
 export default function FloatingCode() {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden hidden sm:block" style={{ zIndex: 0 }}>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block">
       {CODE_SNIPPETS.map((item, i) => {
         const pos = FLOAT_POSITIONS[i];
         return (
           <motion.div
             key={i}
             className="absolute"
-            style={{ right: pos.right, top: pos.top }}
+            style={{ right: pos.right, left: pos.left, top: pos.top }}
             initial={{ opacity: 0 }}
             animate={{ opacity: pos.opacity }}
             transition={{ duration: 1.5, delay: pos.delay }}

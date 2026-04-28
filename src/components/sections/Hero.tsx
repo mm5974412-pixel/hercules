@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Shield, ChevronDown } from "lucide-react";
 import { useRef } from "react";
+import FloatingCode from "../ui/FloatingCode";
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
 
@@ -24,10 +25,15 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden pt-20"
+      className="relative min-h-screen flex items-start sm:items-center overflow-hidden pt-20 sm:pt-20"
     >
       {/* ── Фон ── */}
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(20,184,166,0.08),transparent)]" />
+
+      {/* ── Плавающие блоки кода (только Hero) ── */}
+      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+        <FloatingCode />
+      </div>
 
       {/* ── Левый градиент — текст всегда читается ── */}
       <div className="absolute inset-0 z-[2] bg-gradient-to-r from-bg-primary via-bg-primary/85 to-transparent" />
