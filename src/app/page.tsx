@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import Header from "../components/layout/Header";
+import DotsCanvas from "../components/ui/DotsCanvas";
 import Footer from "../components/layout/Footer";
 import Hero from "../components/sections/Hero";
 import Features from "../components/sections/Features";
@@ -14,11 +14,6 @@ import CtaBanner from "../components/sections/CtaBanner";
 import Modal from "../components/ui/Modal";
 import DemoForm from "../components/forms/DemoForm";
 import DownloadForm from "../components/forms/DownloadForm";
-
-const BackgroundScene = dynamic(
-  () => import("../components/three/BackgroundScene"),
-  { ssr: false }
-);
 
 export default function Home() {
   const [demoOpen, setDemoOpen] = useState(false);
@@ -33,9 +28,7 @@ export default function Home() {
         Перейти к содержимому
       </a>
 
-      <div className="hidden md:block">
-        <BackgroundScene />
-      </div>
+      <DotsCanvas className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: -1 }} />
 
       <Header
         onOpenDemo={() => setDemoOpen(true)}
@@ -48,23 +41,7 @@ export default function Home() {
           onOpenDemo={() => setDemoOpen(true)}
         />
 
-        {/* ── Все блоки после героя — ракета на фоне ── */}
-        <div
-          className="relative fon-wrapper"
-          style={{
-            backgroundImage: `url('${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/fon.png')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          {/* затемняющий оверлей */}
-          <div className="absolute inset-0 bg-bg-primary/94 pointer-events-none" />
-          {/* плавный переход от Hero — убирает полоску на стыке */}
-          <div className="absolute top-0 left-0 right-0 h-8 z-[1] bg-gradient-to-b from-bg-primary to-transparent pointer-events-none" />
-
-          <div className="relative z-10">
+        <div className="relative">
             <Features />
             <Pricing
               onOpenDownload={() => setDownloadOpen(true)}
@@ -78,7 +55,6 @@ export default function Home() {
               onOpenDemo={() => setDemoOpen(true)}
             />
           </div>
-        </div>
       </main>
 
       <Footer />
