@@ -47,7 +47,7 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
         <motion.div
           animate={{ y: [0, -12, 0], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[20%] right-[8%] w-14 h-14 rounded-2xl border border-teal-primary/40 bg-teal-primary/10 flex items-center justify-center backdrop-blur-sm"
+          className="absolute top-[10%] right-[8%] w-14 h-14 rounded-2xl border border-teal-primary/40 bg-teal-primary/10 flex items-center justify-center backdrop-blur-sm"
         >
           <Shield size={22} className="text-teal-primary" />
         </motion.div>
