@@ -78,8 +78,9 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     // Определяем тач-устройство для агрессивной оптимизации
     const isTouchDevice = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
     const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targetFPS = isTouchDevice ? 20 : 30; // Ещё меньше FPS для тач-устройств
+    const targetFPS = 30;
     const frameInterval = 1000 / targetFPS;
+    const waveSpeed = isTouchDevice ? 0.025 : 0.012;
 
     let raf: number;
 
@@ -97,7 +98,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
 
       if (light) {
         // Рисуем плавные градиентные волны
-        waveOffset += 0.008;
+        waveOffset += waveSpeed;
 
         // Кэшируем ширину для оптимизации
         const w = canvas.width;
