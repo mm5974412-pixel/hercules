@@ -27,6 +27,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
 
     const isLightTheme = () => document.documentElement.classList.contains("light");
 
+    // Тёмная тема — анимированные точки
     type Dot = {
       x: number; y: number; r: number;
       alpha: number; aDir: number;
@@ -35,7 +36,7 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
     };
 
     let dots: Dot[] = [];
-    const init = () => {
+    const initDots = () => {
       dots = Array.from({ length: dotCount }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -47,28 +48,65 @@ export default function DotsCanvas({ className, style, dotCount = 200 }: DotsCan
         isTeal: Math.random() > 0.7,
       }));
     };
-    init();
+    initDots();
+
+    // Светлая тема — статичная сетка
+    const gridSpacing = 60;
 
     let raf: number;
     const draw = () => {
       const light = isLightTheme();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      dots.forEach((d) => {
-        d.alpha += d.aDir * 0.003;
-        if (d.alpha > 0.7 || d.alpha < 0.08) d.aDir *= -1;
-        d.x += d.dx;
-        d.y += d.dy;
-        if (d.y < -2) d.y = canvas.height + 2;
-        if (d.x < -2) d.x = canvas.width + 2;
-        if (d.x > canvas.width + 2) d.x = -2;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        // Для светлой темы используем более темные/контрастные цвета
-        ctx.fillStyle = d.isTeal
-          ? `rgba(20,184,166,${light ? d.alpha * 0.8 + 0.2 : d.alpha})`
-          : `rgba(${light ? "15,118,110" : "210,240,240"},${light ? d.alpha * 0.6 + 0.15 : d.alpha * 0.75})`;
-        ctx.fill();
-      });
+
+      if (light) {
+        // Рисуем тонкую техническую сетку
+        ctx.strokeStyle = "rgba(20,184,166,0.08)";
+        ctx.lineWidth = 0.5;
+
+        // Вертикальные линии
+        for (let x = 0; x <= canvas.width; x += gridSpacing) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+
+        // Горизонтальные линии
+        for (let y = 0; y <= canvas.height; y += gridSpacing) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        // Точки на пересечениях
+        ctx.fillStyle = "rgba(20,184,166,0.15)";
+        for (let x = 0; x <= canvas.width; x += gridSpacing) {
+          for (let y = 0; y <= canvas.height; y += gridSpacing) {
+            ctx.beginPath();
+            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      } else {
+        // Тёмная тема — анимированные точки
+        dots.forEach((d) => {
+          d.alpha += d.aDir * 0.003;
+          if (d.alpha > 0.7 || d.alpha < 0.08) d.aDir *= -1;
+          d.x += d.dx;
+          d.y += d.dy;
+          if (d.y < -2) d.y = canvas.height + 2;
+          if (d.x < -2) d.x = canvas.width + 2;
+          if (d.x > canvas.width + 2) d.x = -2;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fillStyle = d.isTeal
+            ? `rgba(45,212,191,${d.alpha})`
+            : `rgba(210,240,240,${d.alpha * 0.75})`;
+          ctx.fill();
+        });
+      }
+
       raf = requestAnimationFrame(draw);
     };
     draw();
