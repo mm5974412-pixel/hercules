@@ -37,35 +37,37 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_50%_60%_at_75%_45%,rgba(45,212,191,0.10),transparent)]" />
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_35%_45%_at_82%_65%,rgba(20,184,166,0.12),transparent)]" />
 
-      {/* ── Щит: CSS background + background-blend-mode, края невозможны ── */}
+      {/* ── Щит: PNG с прозрачным фоном ── */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{ y: bgY, scale: bgScale }}
       >
         {/* Десктоп */}
-        <div
-          className="hidden md:block absolute inset-0 hero-shield-img"
+        <img
+          src={`${basePath}/shield.png`}
+          alt=""
+          className="hidden md:block absolute hero-shield-img"
           style={{
-            backgroundImage: `url(${basePath}/hero-bg.png)`,
-            backgroundSize: "cover",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat",
-            mixBlendMode: "screen",
-            filter: "saturate(1.9) brightness(1.18) contrast(1.09)",
+            width: "56vw",
+            maxWidth: "860px",
+            top: "50%",
+            right: "-4%",
+            transform: "translateY(-50%)",
+            opacity: 0.92,
+            filter: "saturate(1.3) brightness(1.05)",
           }}
         />
         {/* Мобиль */}
-        <div
-          className="md:hidden absolute inset-0"
+        <img
+          src={`${basePath}/shield.png`}
+          alt=""
+          className="md:hidden absolute"
           style={{
-            backgroundImage: `url(${basePath}/hero-bg.png)`,
-            backgroundSize: "110vw auto",
-            backgroundPosition: "center 38%",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: "#0A0E14",
-            backgroundBlendMode: "lighten",
-            opacity: 0.15,
-            filter: "saturate(1.2) brightness(1.1)",
+            width: "90vw",
+            top: "35%",
+            left: "50%",
+            transform: "translate(-50%, 0)",
+            opacity: 0.12,
           }}
         />
       </motion.div>
