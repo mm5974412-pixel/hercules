@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "../components/layout/Header";
 import DotsCanvas from "../components/ui/DotsCanvas";
+import FloatingCode from "../components/ui/FloatingCode";
 import Footer from "../components/layout/Footer";
 import Hero from "../components/sections/Hero";
 import Features from "../components/sections/Features";
@@ -29,6 +30,7 @@ export default function Home() {
       </a>
 
       <DotsCanvas className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: -1 }} />
+      <FloatingCode />
 
       <Header
         onOpenDemo={() => setDemoOpen(true)}

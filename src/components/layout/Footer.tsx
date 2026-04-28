@@ -129,6 +129,8 @@ export default function Footer() {
           <div className="flex items-center gap-3 text-xs font-[family-name:var(--font-jetbrains-mono)] text-text-muted">
             <span>152-ФЗ</span>
             <span className="text-border">•</span>
+            <span>187-ФЗ</span>
+            <span className="text-border">•</span>
             <span>ГОСТ</span>
             <span className="text-border">•</span>
             <span>OWASP</span>
