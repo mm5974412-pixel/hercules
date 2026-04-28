@@ -64,7 +64,7 @@ export default function Hero({ onOpenDownload, onOpenDemo }: HeroProps) {
         className="relative z-20 max-w-[1280px] mx-auto px-6 md:px-12 w-full"
         style={{ opacity }}
       >
-        <div className="max-w-2xl mx-auto sm:mx-0 text-center sm:text-left">
+        <div className="max-w-2xl mx-auto sm:mx-0 text-center sm:text-left mt-12 sm:mt-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
